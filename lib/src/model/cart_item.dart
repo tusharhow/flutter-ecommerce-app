@@ -9,7 +9,7 @@ class CartItem {
   CartItem.fromString(String string) {
     var split = string.split(',');
     product = Product(
-      id: int.parse(split[0]),
+      id:  int.parse(split[0]),
       productName: split[1],
       productDescription: split[2],
       productPrice: double.parse(split[3]),
@@ -19,10 +19,5 @@ class CartItem {
       isAvailable: true,
     );
     quantity = int.parse(split[6]);
-  }
-
-  @override
-  String toString() {
-    return '${product!.id},${product!.productName},${product!.productDescription},${product!.productPrice},${product!.productImage},${product!.category},$quantity';
   }
 }

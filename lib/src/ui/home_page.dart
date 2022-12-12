@@ -1,23 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_app/src/resource/data/data.dart';
-import 'package:provider/provider.dart';
-
+import 'package:get/get.dart';
+import '../components/nav_bar.dart';
 import '../provider/cart_controller.dart';
+import 'bottom_nav_screens/home_page.dart';
 import 'cart_screen.dart';
+import 'category_screen.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    final CartController cartController = Provider.of<CartController>(context);
-    final ProductController productController =
-        Provider.of<ProductController>(context);
+    final List<Widget> screens = [
+      const HomePage(),
+      const CartScreen(),
+      const CategoryScreen(),
+      const CartScreen(),
+    ];
+    final ProductController productController = Get.put(ProductController());
     return Scaffold(
+      extendBody: true,
+      bottomNavigationBar:
+          MyBottomNavBar(currentIndex: productController.selectedIndex.value),
       appBar: AppBar(
+        title: const Text('Mahajon'),
         actions: [
           Stack(
             children: [
+              GetBuilder<CartController>(
+                init: CartController(),
+                initState: (_) {},
+                builder: (cartController) {
+                  return Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Container(
+                      height: 20,
+                      width: 20,
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          cartController.cartItems.length.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
               IconButton(
                 onPressed: () {
                   Navigator.push(
@@ -25,111 +61,23 @@ class MyHomePage extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => const CartScreen()));
                 },
-                icon: const Icon(Icons.shopping_cart),
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Container(
-                  height: 20,
-                  width: 20,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      cartController.cartItems.length.toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
+                icon: Image.asset(
+                  'assets/icons/cart.png',
+                  height: 25,
+                  width: 25,
+                  fit: BoxFit.cover,
                 ),
               ),
             ],
           ),
+          const SizedBox(width: 8),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            GridView.builder(
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 0.7,
-                ),
-                padding: const EdgeInsets.all(10),
-                itemCount: productController.products.length,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final item = productController.products[index];
-                  return Container(
-                    height: 300,
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade100.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 10),
-                        ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.asset(
-                              item.productImage,
-                              height: 110,
-                              width: 100,
-                              fit: BoxFit.cover,
-                            )),
-                        const SizedBox(height: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              item.productName,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                            Text(
-                              '৳ ${item.productPrice.toString().replaceAll(".0", "")}',
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        GestureDetector(
-                          onTap: () {
-                            cartController.addToCart(item);
-                          },
-                          child: Container(
-                            height: 35,
-                            width: 120,
-                            decoration: BoxDecoration(
-                              color: Colors.redAccent.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Add to Cart',
-                                style: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                })
-          ],
-        ),
-      ),
+      body: GetBuilder<ProductController>(
+          init: ProductController(),
+          builder: (cont) {
+            return screens[cont.selectedIndex.value];
+          }),
     );
   }
 }

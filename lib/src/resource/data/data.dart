@@ -1,31 +1,25 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_app/src/model/product_model.dart';
+import 'package:get/get.dart';
 
-class ProductController extends ChangeNotifier {
-  ProductController() {
-    fetchProducts();
-    // fetchRandomOrderPosts();
-  }
-
-  var randomPosts = <Product>[];
+class ProductController extends GetxController {
+  var randomPosts = <Product>[].obs;
   final TextEditingController searchQuery = TextEditingController();
 
-  Future<List<Product>> fetchRandomOrderPosts() async {
-    var random = Random();
+  Future<List<Product>> fetchRandomProducts() async {
+    await Future.delayed(const Duration(seconds: 1));
     randomPosts = products;
-    randomPosts.shuffle(random);
-    notifyListeners();
-
+    update();
     return randomPosts;
   }
 
-  var searhResults = <Product>[];
+  var searhResults = <Product>[].obs;
 
   Future<List<Product>> onSearchTextChanged(String text) async {
     searhResults.clear();
     if (text.isEmpty) {
-      notifyListeners();
+      update();
       return searhResults;
     }
 
@@ -39,111 +33,134 @@ class ProductController extends ChangeNotifier {
         searhResults.add(postDetail);
       }
     }
-    notifyListeners();
+    update();
     return searhResults;
   }
 
-// post reading time
-  String readingTime(String text) {
-    var words = text.split(' ');
-    var readingTime = (words.length / 200).ceil();
-    return '$readingTime মিনিট পড়ার সময়';
+  var selectedIndex = 0.obs;
+  void changeIndex(int index) {
+    selectedIndex(index);
+    update();
   }
 
-  var products = <Product>[];
-  bool isLoading = false;
+  // filter by category
+  var filterByCategory = <Product>[].obs;
+  Future<List<Product>> filterByCategoryList(String category) async {
+    filterByCategory.clear();
+    for (var postDetail in products) {
+      if (postDetail.category.toLowerCase().contains(category.toLowerCase())) {
+        filterByCategory.remove(postDetail);
+        filterByCategory.add(postDetail);
+      }
+    }
+    print(filterByCategory.length);
+    update();
+    return filterByCategory;
+  }
+
+  var products = <Product>[].obs;
+  var isLoading = false.obs;
 
   Future<List<Product>> fetchProducts() async {
-    isLoading = true;
-    notifyListeners();
+    isLoading(true);
+    update();
     await Future.delayed(const Duration(seconds: 1));
     products.addAll([
       Product(
         id: 1,
         productName: 'Lenovo HE05',
-        productDescription: 'বাংলাদেশের সবচেয়ে বড় বাজার',
+        productDescription:
+            'The product detail page is a crucial element to your eCommerce strategy because it is where the fate of a potential sale lives. The product detail page should be carefully designed so that a hierarchy of information is presented in an intuitive manner.',
         productImage: 'assets/images/headphone.jpg',
-        productPrice: 160,
+        productPrice: 160.0,
         productQuantity: 1,
-        category: 'বাজার',
+        category: 'Phones & Accessories',
         isAvailable: true,
       ),
       Product(
         id: 2,
         productName: 'Yuventas Jersy',
-        productDescription: 'বাংলাদেশের সবচেয়ে বড় বাজার',
+        productDescription:
+            'The product detail page is a crucial element to your eCommerce strategy because it is where the fate of a potential sale lives. The product detail page should be carefully designed so that a hierarchy of information is presented in an intuitive manner.',
         productImage: 'assets/images/yuv.jpg',
-        productPrice: 380,
+        productPrice: 380.0,
         productQuantity: 1,
-        category: 'বাজার',
+        category: "Men's Fashion",
         isAvailable: true,
       ),
       Product(
         id: 3,
         productName: 'Brazil Jersy Yellow',
-        productDescription: 'বাংলাদেশের সবচেয়ে বড় বাজার',
+        productDescription:
+            'The product detail page is a crucial element to your eCommerce strategy because it is where the fate of a potential sale lives. The product detail page should be carefully designed so that a hierarchy of information is presented in an intuitive manner.',
         productImage: 'assets/images/bra.jpg',
-        productPrice: 350,
+        productPrice: 350.0,
         productQuantity: 1,
-        category: 'বাজার',
+        category: "Men's Fashion",
         isAvailable: true,
       ),
       Product(
         id: 4,
         productName: 'Brazil Jersy',
-        productDescription: 'বাংলাদেশের সবচেয়ে বড় বাজার',
+        productDescription:
+            'The product detail page is a crucial element to your eCommerce strategy because it is where the fate of a potential sale lives. The product detail page should be carefully designed so that a hierarchy of information is presented in an intuitive manner.',
         productImage: 'assets/images/bra2.png',
-        productPrice: 450,
+        productPrice: 450.0,
         productQuantity: 1,
-        category: 'বাজার',
+        category: "Men's Fashion",
         isAvailable: true,
       ),
       Product(
         id: 5,
         productName: 'M10 TWS',
-        productDescription: 'বাংলাদেশের সবচেয়ে বড় বাজার',
+        productDescription:
+            'The product detail page is a crucial element to your eCommerce strategy because it is where the fate of a potential sale lives. The product detail page should be carefully designed so that a hierarchy of information is presented in an intuitive manner.',
         productImage: 'assets/images/tws.jpg',
-        productPrice: 980,
+        productPrice: 980.0,
         productQuantity: 1,
-        category: 'বাজার',
+        category: "Women's Fashion",
         isAvailable: true,
       ),
       Product(
         id: 6,
         productName: 'inPods 12 TWS',
-        productDescription: 'বাংলাদেশের সবচেয়ে বড় বাজার',
+        productDescription:
+            'The product detail page is a crucial element to your eCommerce strategy because it is where the fate of a potential sale lives. The product detail page should be carefully designed so that a hierarchy of information is presented in an intuitive manner.',
         productImage: 'assets/images/tws2.jpg',
-        productPrice: 1250,
+        productPrice: 1250.0,
         productQuantity: 1,
-        category: 'বাজার',
+        category: "Women's Fashion",
         isAvailable: true,
       ),
       Product(
         id: 7,
         productName: 'Lenovo HE05',
-        productDescription: 'বাংলাদেশের সবচেয়ে বড় বাজার',
+        productDescription:
+            'The product detail page is a crucial element to your eCommerce strategy because it is where the fate of a potential sale lives. The product detail page should be carefully designed so that a hierarchy of information is presented in an intuitive manner.',
         productImage: 'assets/images/headphone.jpg',
-        productPrice: 100,
+        productPrice: 100.0,
         productQuantity: 1,
-        category: 'বাজার',
+        category: "Women's Fashion",
         isAvailable: true,
       ),
       Product(
         id: 8,
         productName: 'Lenovo HE05',
-        productDescription: 'বাংলাদেশের সবচেয়ে বড় বাজার',
+        productDescription:
+            'The product detail page is a crucial element to your eCommerce strategy because it is where the fate of a potential sale lives. The product detail page should be carefully designed so that a hierarchy of information is presented in an intuitive manner.',
         productImage: 'assets/images/headphone.jpg',
-        productPrice: 100,
+        productPrice: 100.0,
         productQuantity: 1,
-        category: 'বাজার',
+        category: "Women's Fashion",
         isAvailable: true,
       ),
       Product(
         id: 9,
         productName: 'Lenovo HE05',
-        productDescription: 'বাংলাদেশের সবচেয়ে বড় বাজার',
+        productDescription:
+            'The product detail page is a crucial element to your eCommerce strategy because it is where the fate of a potential sale lives. The product detail page should be carefully designed so that a hierarchy of information is presented in an intuitive manner.',
         productImage: 'assets/images/headphone.jpg',
-        productPrice: 100,
+        productPrice: 100.0,
         productQuantity: 1,
         category: 'বাজার',
         isAvailable: true,
@@ -151,9 +168,10 @@ class ProductController extends ChangeNotifier {
       Product(
         id: 10,
         productName: 'Lenovo HE05',
-        productDescription: 'বাংলাদেশের সবচেয়ে বড় বাজার',
+        productDescription:
+            'The product detail page is a crucial element to your eCommerce strategy because it is where the fate of a potential sale lives. The product detail page should be carefully designed so that a hierarchy of information is presented in an intuitive manner.',
         productImage: 'assets/images/headphone.jpg',
-        productPrice: 100,
+        productPrice: 100.0,
         productQuantity: 1,
         category: 'বাজার',
         isAvailable: true,
@@ -161,9 +179,10 @@ class ProductController extends ChangeNotifier {
       Product(
         id: 11,
         productName: 'Lenovo HE05',
-        productDescription: 'বাংলাদেশের সবচেয়ে বড় বাজার',
+        productDescription:
+            'The product detail page is a crucial element to your eCommerce strategy because it is where the fate of a potential sale lives. The product detail page should be carefully designed so that a hierarchy of information is presented in an intuitive manner.',
         productImage: 'assets/images/headphone.jpg',
-        productPrice: 100,
+        productPrice: 100.0,
         productQuantity: 1,
         category: 'বাজার',
         isAvailable: true,
@@ -171,16 +190,25 @@ class ProductController extends ChangeNotifier {
       Product(
         id: 12,
         productName: 'Lenovo HE05',
-        productDescription: 'বাংলাদেশের সবচেয়ে বড় বাজার',
+        productDescription:
+            'The product detail page is a crucial element to your eCommerce strategy because it is where the fate of a potential sale lives. The product detail page should be carefully designed so that a hierarchy of information is presented in an intuitive manner.',
         productImage: 'assets/images/headphone.jpg',
-        productPrice: 100,
+        productPrice: 100.0,
         productQuantity: 1,
         category: 'বাজার',
         isAvailable: true,
       ),
     ]);
-    isLoading = false;
-    notifyListeners();
+
+    isLoading(false);
+    update();
     return products;
+  }
+
+  @override
+  void onInit() {
+    fetchProducts();
+    fetchRandomProducts();
+    super.onInit();
   }
 }
